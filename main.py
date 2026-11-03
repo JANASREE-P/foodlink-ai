@@ -1,6 +1,6 @@
-
 from fastapi import FastAPI, File, UploadFile, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
+from huggingface_hub import hf_hub_download
 from PIL import Image
 import tensorflow as tf
 import numpy as np
@@ -23,7 +23,12 @@ class_names = [
     "Karacadag"
 ]
 
-rice_model = tf.keras.models.load_model("rice_classifier.keras")
+model_path = hf_hub_download(
+    repo_id="Janasree123/foodlink-rice-classifier",
+    filename="rice_classifier.keras"
+)
+
+rice_model = tf.keras.models.load_model(model_path)
 
 @app.get("/")
 def home():
@@ -51,3 +56,4 @@ async def predict_food(file: UploadFile = File(...)):
 
     except Exception as error:
         raise HTTPException(status_code=400, detail=str(error))
+
